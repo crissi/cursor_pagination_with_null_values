@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,31 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    User::query()->delete();
+
+    User::factory()->create([
+        'email_verified_at' => null
+    ]);
+
+    User::factory()->create([
+        'email_verified_at' => null
+    ]);
+
+    User::factory()->create([
+        'email_verified_at' => 1
+    ]);
+    User::factory()->create([
+        'email_verified_at' => 4
+    ]);
+
+    User::factory()->create();
+    User::factory()->create();
+
+    $res = User::orderBy('email_verified_at')->orderBy('id')->cursorPaginate(2, ['*'], null, null);
+
+    $nextCursor = $res->nextCursor();
+    // next cursor will have email_verified_at as null param
+
+    User::orderBy('email_verified_at')->orderBy('id')->cursorPaginate(2, ['*'], null, $nextCursor);
+
 });
